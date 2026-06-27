@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#0a0a0f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>StudyQuest — Daily Planner & Quest Tracker</title>
-  
+
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
-  
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
   <!-- Custom Styles -->
   <link rel="stylesheet" href="style.css">
-  
+
   <script>
     // Register Service Worker
     if ('serviceWorker' in navigator) {
@@ -28,444 +32,460 @@
     }
   </script>
 </head>
+
 <body>
 
-<div id="app">
-  
-  <!-- =========================================
+  <div id="app">
+
+    <!-- =========================================
        PAGE: Auth (Login/Register)
        ========================================= -->
-  <div id="page-auth" class="page active">
-    <div class="auth-page">
-      <div class="auth-logo">⚔️</div>
-      <h1 class="auth-title">StudyQuest</h1>
-      <p class="auth-subtitle">ระบบเควสและการวางแผนสำหรับนักเรียน</p>
-      
-      <div class="glass-card auth-form">
-        <form id="auth-form" onsubmit="event.preventDefault(); window.App.handleAuthSubmit();">
-          
-          <div id="auth-register-fields" class="hidden">
+    <div id="page-auth" class="page active">
+      <div class="auth-page">
+        <div class="auth-logo">😴</div>
+        <h1 class="auth-title">StudyQuest</h1>
+        <p class="auth-subtitle">ระบบเควสและการวางแผนสำหรับนักเรียน</p>
+
+        <div class="glass-card auth-form">
+          <form id="auth-form" onsubmit="event.preventDefault(); window.App.handleAuthSubmit();">
+
+            <div id="auth-register-fields" class="hidden">
+              <div class="form-group">
+                <label class="form-label">ชื่อที่แสดง</label>
+                <input type="text" id="auth-display-name" class="input-field" placeholder="เช่น ผู้กล้าแว่นตา">
+              </div>
+            </div>
+
             <div class="form-group">
-              <label class="form-label">ชื่อที่แสดง</label>
-              <input type="text" id="auth-display-name" class="input-field" placeholder="เช่น ผู้กล้าแว่นตา">
+              <label class="form-label">ชื่อผู้ใช้</label>
+              <input type="text" id="auth-username" class="input-field" placeholder="Username" required>
             </div>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">ชื่อผู้ใช้</label>
-            <input type="text" id="auth-username" class="input-field" placeholder="Username" required>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">รหัสผ่าน</label>
-            <input type="password" id="auth-password" class="input-field" placeholder="••••••••" required minlength="4">
-          </div>
-          
-          <button type="submit" id="auth-submit-btn" class="btn btn-primary w-full mt-8">เข้าสู่ระบบ</button>
-          
-          <div class="auth-toggle">
-            <span id="auth-toggle-text">ยังไม่มีบัญชีใช่ไหม?</span>
-            <a onclick="window.App.toggleAuthMode()">สมัครสมาชิก</a>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 
-  <!-- =========================================
-       PAGE: Morning Quest Gate
-       ========================================= -->
-  <div id="page-morning" class="page">
-    <div class="morning-gate">
-      <h2 class="morning-gate-title">รุ่งอรุณแห่งการเรียน!</h2>
-      <p class="morning-gate-sub">ทำเควสเช้าให้เสร็จเพื่อรับบัฟ EXP รายวัน</p>
-      
-      <div class="progress-container mb-16" style="max-width: 380px;">
-        <div id="morning-progress" class="progress-bar" style="width: 0%"></div>
-      </div>
-      <div id="morning-progress-text" class="progress-text mb-20">ทำสำเร็จ 0/3</div>
-      
-      <div id="morning-quests-container" class="morning-quests-list">
-        <!-- Injected via JS -->
-      </div>
-      
-      <button id="morning-start-btn" class="btn btn-primary w-full mt-16" style="max-width: 380px;" disabled onclick="window.App.startDay()">
-        🚀 เริ่มวันใหม่!
-      </button>
-      
-      <button class="btn btn-outline w-full mt-8" style="max-width: 380px;" onclick="window.App.startDay(true)">
-        ข้ามเควสเช้า (Skip)
-      </button>
-    </div>
-  </div>
-
-  <!-- =========================================
-       PAGE: Home
-       ========================================= -->
-  <div id="page-home" class="page">
-    
-    <!-- Header -->
-    <header class="header flex justify-between items-center">
-      <div>
-        <div class="header-title">StudyQuest</div>
-        <div id="header-user-name" class="header-subtitle">ผู้กล้า...</div>
-      </div>
-      <button class="btn-icon" style="background: transparent; font-size: 1.2rem;" onclick="window.App.logout()" title="ออกจากระบบ">🚪</button>
-    </header>
-    
-    <!-- Alert Banner Container -->
-    <div id="alert-banner-container"></div>
-    
-    <!-- Clock Section -->
-    <div class="glass-card mb-16">
-      <div class="clock-container text-left" style="padding: 0;">
-        <div id="clock-date" class="clock-date" style="text-align: left;">วันจันทร์ที่ 1 มกราคม 2567</div>
-        <div id="clock-time" class="clock-time" style="text-align: left;">00:00:00</div>
-        <div id="clock-greeting" class="clock-greeting" style="text-align: left;">สวัสดี!</div>
-      </div>
-    </div>
-    
-    <!-- Current Class Indicator -->
-    <div id="current-class-card" class="class-indicator mb-16" onclick="window.App.openCurrentClassModal()">
-      <!-- Injected via JS -->
-      <div class="class-indicator-label">กำลังโหลดตารางเรียน...</div>
-    </div>
-    
-    <!-- Today's Schedule -->
-    <div class="mb-20">
-      <div class="section-title">
-        <span class="emoji">📅</span> ตารางเรียนวันนี้
-      </div>
-      <div id="today-schedule-list" class="flex-col gap-6">
-        <!-- Injected via JS -->
-        <div class="empty-state">
-          <div class="empty-state-icon">😴</div>
-          <div class="empty-state-text">ไม่มีเรียนแล้ว พักผ่อนได้!</div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Upcoming Assignments -->
-    <div class="mb-20">
-      <div class="section-title justify-between">
-        <div class="flex items-center gap-8">
-          <span class="emoji">📝</span> งานที่ต้องส่ง
-          <span id="assignment-count-badge" class="section-badge">0</span>
-        </div>
-        <button class="btn btn-xs btn-outline" onclick="window.App.navTo('manage', 'assignments')">ดูทั้งหมด</button>
-      </div>
-      <div id="home-assignments-list" class="flex-col gap-6">
-        <!-- Injected via JS -->
-      </div>
-    </div>
-    
-    <!-- Afternoon / Evening Quests -->
-    <div id="home-quests-section" class="mb-20 hidden">
-      <div class="section-title">
-        <span class="emoji">⛅</span> เควสประจำวัน
-      </div>
-      <div id="home-quests-list" class="flex-col gap-6">
-        <!-- Injected via JS -->
-      </div>
-    </div>
-
-  </div>
-
-  <!-- =========================================
-       PAGE: Manage
-       ========================================= -->
-  <div id="page-manage" class="page">
-    <header class="header">
-      <div class="header-title">จัดการข้อมูล</div>
-      <div class="header-subtitle">จัดการงาน เควส และวิชาเรียน</div>
-    </header>
-    
-    <div class="tabs mt-16">
-      <button class="tab-btn active" onclick="window.App.switchManageTab('assignments')">งาน/สอบ</button>
-      <button class="tab-btn" onclick="window.App.switchManageTab('subjects')">วิชาเรียน</button>
-      <button class="tab-btn" onclick="window.App.switchManageTab('quests')">เควสเสริม</button>
-      <button class="tab-btn" onclick="window.App.switchManageTab('events')">ปฏิทิน</button>
-    </div>
-    
-    <!-- Tab: Assignments -->
-    <div id="manage-tab-assignments" class="tab-content active">
-      <div class="glass-card mb-16">
-        <form onsubmit="event.preventDefault(); window.App.addAssignment();">
-          <div class="form-group position-relative">
-            <label class="form-label">ชื่องาน (พิมพ์ 'พรุ่งนี้' ระบบจะตั้งวันให้อัตโนมัติ)</label>
-            <input type="text" id="add-task-name" class="input-field" placeholder="เช่น ทำแบบฝึกคณิต 5 ข้อ พรุ่งนี้" autocomplete="off" oninput="window.App.handleNlpInput(this.value)">
-            <div id="nlp-suggestion" class="nlp-suggestion">ตั้งวันส่ง: พรุ่งนี้</div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">วิชา</label>
-            <select id="add-task-subject" class="input-field">
-              <option value="">-- ไม่ระบุวิชา --</option>
-              <!-- Injected via JS -->
-            </select>
-          </div>
-          <div class="flex gap-10">
-            <div class="form-group" style="flex: 1;">
-              <label class="form-label">กำหนดส่ง</label>
-              <input type="date" id="add-task-date" class="input-field">
+            <div class="form-group">
+              <label class="form-label">รหัสผ่าน</label>
+              <input type="password" id="auth-password" class="input-field" placeholder="••••••••" required
+                minlength="4">
             </div>
-            <div class="form-group" style="flex: 1;">
-              <label class="form-label">ประเภท</label>
-              <select id="add-task-type" class="input-field">
-                <option value="assignment">การบ้าน / งาน</option>
-                <option value="exam">สอบ / ควิซ</option>
-              </select>
+
+            <button type="submit" id="auth-submit-btn" class="btn btn-primary w-full mt-8">เข้าสู่ระบบ</button>
+
+            <div class="auth-toggle">
+              <span id="auth-toggle-text">ยังไม่มีบัญชีใช่ไหม?</span>
+              <a onclick="window.App.toggleAuthMode()">สมัครสมาชิก</a>
             </div>
-          </div>
-          <button type="submit" class="btn btn-primary w-full mt-8">+ เพิ่มภารกิจ</button>
-        </form>
-      </div>
-      
-      <div class="flex justify-between items-center mb-8">
-        <div class="section-title mb-0">รายการทั้งหมด</div>
-      </div>
-      
-      <div id="manage-assignments-list" class="flex-col gap-6">
-        <!-- Injected via JS -->
-      </div>
-    </div>
-    
-    <!-- Tab: Subjects -->
-    <div id="manage-tab-subjects" class="tab-content">
-      <!-- Readonly list of hardcoded subjects from schedule -->
-      <div class="glass-card mb-16">
-        <p class="text-xs text-muted mb-8">ตารางเรียนถูกกำหนดไว้ในระบบแล้ว คุณสามารถเพิ่ม/แก้ไขบันทึกย่อหรือข้อมูลอัปเดตของแต่ละวิชาได้</p>
-        <button class="btn btn-outline w-full text-xs" onclick="window.App.exportICal()">📅 เชื่อมต่อ Calendar (.ics)</button>
-      </div>
-      
-      <div id="manage-subjects-list" class="flex-col gap-6">
-        <!-- Injected via JS -->
-      </div>
-    </div>
-    
-    <!-- Tab: Quests -->
-    <div id="manage-tab-quests" class="tab-content">
-      <div class="glass-card mb-16">
-        <form onsubmit="event.preventDefault(); window.App.addQuest();">
-          <div class="form-group">
-            <label class="form-label">ชื่อเควส</label>
-            <input type="text" id="add-quest-name" class="input-field" placeholder="เช่น เตรียมชุดพละ, จัดกระเป๋า" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">ช่วงเวลา</label>
-            <select id="add-quest-time" class="input-field">
-              <option value="morning">ตอนเช้า (ก่อนเริ่มวัน)</option>
-              <option value="afternoon">ระหว่างวัน</option>
-              <option value="evening">ตอนเย็น (หลังเลิกเรียน)</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary w-full mt-8">+ เพิ่มเควส</button>
-        </form>
-      </div>
-      
-      <div id="manage-quests-list" class="flex-col gap-6">
-        <!-- Injected via JS -->
-      </div>
-    </div>
-    
-    <!-- Tab: Events -->
-    <div id="manage-tab-events" class="tab-content">
-      <div class="glass-card mb-16">
-        <form onsubmit="event.preventDefault(); window.App.addEvent();">
-          <div class="form-group">
-            <label class="form-label">ชื่อเหตุการณ์</label>
-            <input type="text" id="add-event-name" class="input-field" placeholder="เช่น วันหยุดพิเศษ, กีฬาสี" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">วันที่</label>
-            <input type="date" id="add-event-date" class="input-field" required>
-          </div>
-          <button type="submit" class="btn btn-primary w-full mt-8">+ เพิ่มเหตุการณ์</button>
-        </form>
-      </div>
-      
-      <div id="manage-events-list" class="flex-col gap-6">
-        <!-- Injected via JS -->
-      </div>
-    </div>
-
-  </div>
-
-  <!-- =========================================
-       PAGE: Journal & Analytics
-       ========================================= -->
-  <div id="page-journal" class="page">
-    <header class="header">
-      <div class="header-title">บันทึกประจำวัน</div>
-      <div class="header-subtitle">บันทึกการเดินทางและสถิติ</div>
-    </header>
-    
-    <div class="tabs mt-16">
-      <button class="tab-btn active" onclick="window.App.switchJournalTab('journal')">บันทึกประจำวัน</button>
-      <button class="tab-btn" onclick="window.App.switchJournalTab('analytics')">สถิติ (Recap)</button>
-    </div>
-    
-    <!-- Tab: Journal -->
-    <div id="journal-tab-journal" class="tab-content active">
-      <div class="glass-card mb-16">
-        <form onsubmit="event.preventDefault(); window.App.addJournalEntry();">
-          <div class="form-group">
-            <textarea id="add-journal-text" class="input-field" placeholder="วันนี้มีอะไรน่าจดจำบ้าง..." required></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary w-full mt-4">บันทึกความทรงจำ</button>
-        </form>
-      </div>
-      
-      <div id="journal-list">
-        <!-- Injected via JS -->
-      </div>
-    </div>
-    
-    <!-- Tab: Analytics -->
-    <div id="journal-tab-analytics" class="tab-content">
-      
-      <div class="glass-card mb-16">
-        <div class="section-title mb-12"><span class="emoji">📊</span> สถิติสัปดาห์นี้</div>
-        <div class="stat-grid">
-          <div class="stat-card">
-            <div id="stat-quests" class="stat-value">0</div>
-            <div class="stat-label">เควสที่สำเร็จ</div>
-          </div>
-          <div class="stat-card">
-            <div id="stat-tasks" class="stat-value">0</div>
-            <div class="stat-label">งานที่ส่งแล้ว</div>
-          </div>
-        </div>
-        <button class="btn btn-outline w-full mt-12" onclick="window.App.showWeeklyRecap()">สรุปผลประจำสัปดาห์</button>
-      </div>
-      
-      <div class="section-title mt-24 mb-12"><span class="emoji">⏳</span> Time Machine (ประวัติย้อนหลัง)</div>
-      <p class="text-xs text-muted mb-12">ดูงานและภารกิจที่เคยทำสำเร็จไปแล้ว เพื่อทบทวนก่อนสอบ</p>
-      
-      <div id="history-list" class="flex-col gap-6">
-        <!-- Injected via JS -->
-      </div>
-    </div>
-
-  </div>
-
-  <!-- =========================================
-       Bottom Navigation
-       ========================================= -->
-  <nav id="bottom-nav" class="bottom-nav hidden">
-    <button class="nav-item active" onclick="window.App.navTo('home')">
-      <span class="nav-icon">🏠</span>
-      <span>หน้าหลัก</span>
-    </button>
-    <button class="nav-item" onclick="window.App.navTo('manage')">
-      <span class="nav-icon">📋</span>
-      <span>จัดการ</span>
-    </button>
-    <button class="nav-item" onclick="window.App.navTo('journal')">
-      <span class="nav-icon">📓</span>
-      <span>บันทึก</span>
-    </button>
-  </nav>
-
-  <!-- =========================================
-       MODAL: Subject Details
-       ========================================= -->
-  <div id="modal-subject" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title" id="modal-subject-title">ชื่อวิชา</div>
-        <button class="modal-close" onclick="window.App.closeModal('modal-subject')">×</button>
-      </div>
-      <div class="modal-body">
-        
-        <div class="flex gap-10 mb-16">
-          <div class="glass-card-compact flex-col items-center" style="flex: 1;">
-            <div class="text-xxs text-muted font-bold uppercase">รหัสวิชา</div>
-            <div id="modal-subject-code" class="text-sm font-bold mt-4">---</div>
-          </div>
-          <div class="glass-card-compact flex-col items-center" style="flex: 1;">
-            <div class="text-xxs text-muted font-bold uppercase">เวลาเรียน</div>
-            <div id="modal-subject-time" class="text-sm font-bold mt-4">---</div>
-          </div>
-        </div>
-        
-        <div class="tabs">
-          <button class="tab-btn active" onclick="window.App.switchModalTab('tasks')">งาน/การบ้าน</button>
-          <button class="tab-btn" onclick="window.App.switchModalTab('notes')">โน้ตสรุป</button>
-        </div>
-        
-        <div id="modal-tab-tasks" class="tab-content active">
-          <div id="modal-subject-tasks-list" class="flex-col gap-6 mt-12 mb-16">
-            <!-- Injected via JS -->
-          </div>
-          <button class="btn btn-outline w-full text-xs" onclick="window.App.quickAddSubjectTask()">+ เพิ่มงานวิชานี้</button>
-        </div>
-        
-        <div id="modal-tab-notes" class="tab-content">
-          <form onsubmit="event.preventDefault(); window.App.saveSubjectNote();">
-            <textarea id="modal-subject-note" class="input-field mt-8 mb-12" style="min-height: 120px;" placeholder="พิมพ์โน้ตสรุปเนื้อหาวิชานี้..."></textarea>
-            <button type="submit" class="btn btn-primary w-full">บันทึกโน้ต</button>
           </form>
         </div>
-        
       </div>
     </div>
-  </div>
 
-  <!-- =========================================
+    <!-- =========================================
+       PAGE: Morning Quest Gate
+       ========================================= -->
+    <div id="page-morning" class="page">
+      <div class="morning-gate">
+        <h2 class="morning-gate-title">รุ่งอรุณแห่งการเรียน!</h2>
+        <p class="morning-gate-sub">ทำเควสเช้าให้เสร็จเพื่อรับบัฟ EXP รายวัน</p>
+
+        <div class="progress-container mb-16" style="max-width: 380px;">
+          <div id="morning-progress" class="progress-bar" style="width: 0%"></div>
+        </div>
+        <div id="morning-progress-text" class="progress-text mb-20">ทำสำเร็จ 0/3</div>
+
+        <div id="morning-quests-container" class="morning-quests-list">
+          <!-- Injected via JS -->
+        </div>
+
+        <button id="morning-start-btn" class="btn btn-primary w-full mt-16" style="max-width: 380px;" disabled
+          onclick="window.App.startDay()">
+          🚀 เริ่มวันใหม่!
+        </button>
+
+        <button class="btn btn-outline w-full mt-8" style="max-width: 380px;" onclick="window.App.startDay(true)">
+          ข้ามเควสเช้า (Skip)
+        </button>
+      </div>
+    </div>
+
+    <!-- =========================================
+       PAGE: Home
+       ========================================= -->
+    <div id="page-home" class="page">
+
+      <!-- Header -->
+      <header class="header flex justify-between items-center">
+        <div>
+          <div class="header-title">StudyQuest</div>
+          <div id="header-user-name" class="header-subtitle">ผู้กล้า...</div>
+        </div>
+        <button class="btn-icon" style="background: transparent; font-size: 1.2rem;" onclick="window.App.logout()"
+          title="ออกจากระบบ">🚪</button>
+      </header>
+
+      <!-- Alert Banner Container -->
+      <div id="alert-banner-container"></div>
+
+      <!-- Clock Section -->
+      <div class="glass-card mb-16">
+        <div class="clock-container text-left" style="padding: 0;">
+          <div id="clock-date" class="clock-date" style="text-align: left;">วันจันทร์ที่ 1 มกราคม 2567</div>
+          <div id="clock-time" class="clock-time" style="text-align: left;">00:00:00</div>
+          <div id="clock-greeting" class="clock-greeting" style="text-align: left;">สวัสดี!</div>
+        </div>
+      </div>
+
+      <!-- Current Class Indicator -->
+      <div id="current-class-card" class="class-indicator mb-16" onclick="window.App.openCurrentClassModal()">
+        <!-- Injected via JS -->
+        <div class="class-indicator-label">กำลังโหลดตารางเรียน...</div>
+      </div>
+
+      <!-- Today's Schedule -->
+      <div class="mb-20">
+        <div class="section-title">
+          <span class="emoji">📅</span> ตารางเรียนวันนี้
+        </div>
+        <div id="today-schedule-list" class="flex-col gap-6">
+          <!-- Injected via JS -->
+          <div class="empty-state">
+            <div class="empty-state-icon">😴</div>
+            <div class="empty-state-text">ไม่มีเรียนแล้ว พักผ่อนได้!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming Assignments -->
+      <div class="mb-20">
+        <div class="section-title justify-between">
+          <div class="flex items-center gap-8">
+            <span class="emoji">📝</span> งานที่ต้องส่ง
+            <span id="assignment-count-badge" class="section-badge">0</span>
+          </div>
+          <button class="btn btn-xs btn-outline" onclick="window.App.navTo('manage', 'assignments')">ดูทั้งหมด</button>
+        </div>
+        <div id="home-assignments-list" class="flex-col gap-6">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Afternoon / Evening Quests -->
+      <div id="home-quests-section" class="mb-20 hidden">
+        <div class="section-title">
+          <span class="emoji">⛅</span> เควสประจำวัน
+        </div>
+        <div id="home-quests-list" class="flex-col gap-6">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =========================================
+       PAGE: Manage
+       ========================================= -->
+    <div id="page-manage" class="page">
+      <header class="header">
+        <div class="header-title">จัดการข้อมูล</div>
+        <div class="header-subtitle">จัดการงาน เควส และวิชาเรียน</div>
+      </header>
+
+      <div class="tabs mt-16">
+        <button class="tab-btn active" onclick="window.App.switchManageTab('assignments')">งาน/สอบ</button>
+        <button class="tab-btn" onclick="window.App.switchManageTab('subjects')">วิชาเรียน</button>
+        <button class="tab-btn" onclick="window.App.switchManageTab('quests')">เควสเสริม</button>
+        <button class="tab-btn" onclick="window.App.switchManageTab('events')">ปฏิทิน</button>
+      </div>
+
+      <!-- Tab: Assignments -->
+      <div id="manage-tab-assignments" class="tab-content active">
+        <div class="glass-card mb-16">
+          <form onsubmit="event.preventDefault(); window.App.addAssignment();">
+            <div class="form-group position-relative">
+              <label class="form-label">ชื่องาน (พิมพ์ 'พรุ่งนี้' ระบบจะตั้งวันให้อัตโนมัติ)</label>
+              <input type="text" id="add-task-name" class="input-field" placeholder="เช่น ทำแบบฝึกคณิต 5 ข้อ พรุ่งนี้"
+                autocomplete="off" oninput="window.App.handleNlpInput(this.value)">
+              <div id="nlp-suggestion" class="nlp-suggestion">ตั้งวันส่ง: พรุ่งนี้</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">วิชา</label>
+              <select id="add-task-subject" class="input-field">
+                <option value="">-- ไม่ระบุวิชา --</option>
+                <!-- Injected via JS -->
+              </select>
+            </div>
+            <div class="flex gap-10">
+              <div class="form-group" style="flex: 1;">
+                <label class="form-label">กำหนดส่ง</label>
+                <input type="date" id="add-task-date" class="input-field">
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label class="form-label">ประเภท</label>
+                <select id="add-task-type" class="input-field">
+                  <option value="assignment">การบ้าน / งาน</option>
+                  <option value="exam">สอบ / ควิซ</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-full mt-8">+ เพิ่มภารกิจ</button>
+          </form>
+        </div>
+
+        <div class="flex justify-between items-center mb-8">
+          <div class="section-title mb-0">รายการทั้งหมด</div>
+        </div>
+
+        <div id="manage-assignments-list" class="flex-col gap-6">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Tab: Subjects -->
+      <div id="manage-tab-subjects" class="tab-content">
+        <!-- Readonly list of hardcoded subjects from schedule -->
+        <div class="glass-card mb-16">
+          <p class="text-xs text-muted mb-8">ตารางเรียนถูกกำหนดไว้ในระบบแล้ว
+            คุณสามารถเพิ่ม/แก้ไขบันทึกย่อหรือข้อมูลอัปเดตของแต่ละวิชาได้</p>
+          <button class="btn btn-outline w-full text-xs" onclick="window.App.exportICal()">📅 เชื่อมต่อ Calendar
+            (.ics)</button>
+        </div>
+
+        <div id="manage-subjects-list" class="flex-col gap-6">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Tab: Quests -->
+      <div id="manage-tab-quests" class="tab-content">
+        <div class="glass-card mb-16">
+          <form onsubmit="event.preventDefault(); window.App.addQuest();">
+            <div class="form-group">
+              <label class="form-label">ชื่อเควส</label>
+              <input type="text" id="add-quest-name" class="input-field" placeholder="เช่น เตรียมชุดพละ, จัดกระเป๋า"
+                required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ช่วงเวลา</label>
+              <select id="add-quest-time" class="input-field">
+                <option value="morning">ตอนเช้า (ก่อนเริ่มวัน)</option>
+                <option value="afternoon">ระหว่างวัน</option>
+                <option value="evening">ตอนเย็น (หลังเลิกเรียน)</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary w-full mt-8">+ เพิ่มเควส</button>
+          </form>
+        </div>
+
+        <div id="manage-quests-list" class="flex-col gap-6">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Tab: Events -->
+      <div id="manage-tab-events" class="tab-content">
+        <div class="glass-card mb-16">
+          <form onsubmit="event.preventDefault(); window.App.addEvent();">
+            <div class="form-group">
+              <label class="form-label">ชื่อเหตุการณ์</label>
+              <input type="text" id="add-event-name" class="input-field" placeholder="เช่น วันหยุดพิเศษ, กีฬาสี"
+                required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">วันที่</label>
+              <input type="date" id="add-event-date" class="input-field" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-full mt-8">+ เพิ่มเหตุการณ์</button>
+          </form>
+        </div>
+
+        <div id="manage-events-list" class="flex-col gap-6">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =========================================
+       PAGE: Journal & Analytics
+       ========================================= -->
+    <div id="page-journal" class="page">
+      <header class="header">
+        <div class="header-title">บันทึกประจำวัน</div>
+        <div class="header-subtitle">บันทึกการเดินทางและสถิติ</div>
+      </header>
+
+      <div class="tabs mt-16">
+        <button class="tab-btn active" onclick="window.App.switchJournalTab('journal')">บันทึกประจำวัน</button>
+        <button class="tab-btn" onclick="window.App.switchJournalTab('analytics')">สถิติ (Recap)</button>
+      </div>
+
+      <!-- Tab: Journal -->
+      <div id="journal-tab-journal" class="tab-content active">
+        <div class="glass-card mb-16">
+          <form onsubmit="event.preventDefault(); window.App.addJournalEntry();">
+            <div class="form-group">
+              <textarea id="add-journal-text" class="input-field" placeholder="วันนี้มีอะไรน่าจดจำบ้าง..."
+                required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-full mt-4">บันทึกความทรงจำ</button>
+          </form>
+        </div>
+
+        <div id="journal-list">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Tab: Analytics -->
+      <div id="journal-tab-analytics" class="tab-content">
+
+        <div class="glass-card mb-16">
+          <div class="section-title mb-12"><span class="emoji">📊</span> สถิติสัปดาห์นี้</div>
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div id="stat-quests" class="stat-value">0</div>
+              <div class="stat-label">เควสที่สำเร็จ</div>
+            </div>
+            <div class="stat-card">
+              <div id="stat-tasks" class="stat-value">0</div>
+              <div class="stat-label">งานที่ส่งแล้ว</div>
+            </div>
+          </div>
+          <button class="btn btn-outline w-full mt-12"
+            onclick="window.App.showWeeklyRecap()">สรุปผลประจำสัปดาห์</button>
+        </div>
+
+        <div class="section-title mt-24 mb-12"><span class="emoji">⏳</span> Time Machine (ประวัติย้อนหลัง)</div>
+        <p class="text-xs text-muted mb-12">ดูงานและภารกิจที่เคยทำสำเร็จไปแล้ว เพื่อทบทวนก่อนสอบ</p>
+
+        <div id="history-list" class="flex-col gap-6">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =========================================
+       Bottom Navigation
+       ========================================= -->
+    <nav id="bottom-nav" class="bottom-nav hidden">
+      <button class="nav-item active" onclick="window.App.navTo('home')">
+        <span class="nav-icon">🏠</span>
+        <span>หน้าหลัก</span>
+      </button>
+      <button class="nav-item" onclick="window.App.navTo('manage')">
+        <span class="nav-icon">📋</span>
+        <span>จัดการ</span>
+      </button>
+      <button class="nav-item" onclick="window.App.navTo('journal')">
+        <span class="nav-icon">📓</span>
+        <span>บันทึก</span>
+      </button>
+    </nav>
+
+    <!-- =========================================
+       MODAL: Subject Details
+       ========================================= -->
+    <div id="modal-subject" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title" id="modal-subject-title">ชื่อวิชา</div>
+          <button class="modal-close" onclick="window.App.closeModal('modal-subject')">×</button>
+        </div>
+        <div class="modal-body">
+
+          <div class="flex gap-10 mb-16">
+            <div class="glass-card-compact flex-col items-center" style="flex: 1;">
+              <div class="text-xxs text-muted font-bold uppercase">รหัสวิชา</div>
+              <div id="modal-subject-code" class="text-sm font-bold mt-4">---</div>
+            </div>
+            <div class="glass-card-compact flex-col items-center" style="flex: 1;">
+              <div class="text-xxs text-muted font-bold uppercase">เวลาเรียน</div>
+              <div id="modal-subject-time" class="text-sm font-bold mt-4">---</div>
+            </div>
+          </div>
+
+          <div class="tabs">
+            <button class="tab-btn active" onclick="window.App.switchModalTab('tasks')">งาน/การบ้าน</button>
+            <button class="tab-btn" onclick="window.App.switchModalTab('notes')">โน้ตสรุป</button>
+          </div>
+
+          <div id="modal-tab-tasks" class="tab-content active">
+            <div id="modal-subject-tasks-list" class="flex-col gap-6 mt-12 mb-16">
+              <!-- Injected via JS -->
+            </div>
+            <button class="btn btn-outline w-full text-xs" onclick="window.App.quickAddSubjectTask()">+
+              เพิ่มงานวิชานี้</button>
+          </div>
+
+          <div id="modal-tab-notes" class="tab-content">
+            <form onsubmit="event.preventDefault(); window.App.saveSubjectNote();">
+              <textarea id="modal-subject-note" class="input-field mt-8 mb-12" style="min-height: 120px;"
+                placeholder="พิมพ์โน้ตสรุปเนื้อหาวิชานี้..."></textarea>
+              <button type="submit" class="btn btn-primary w-full">บันทึกโน้ต</button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================
        OVERLAY: Pomodoro Timer
        ========================================= -->
-  <div id="overlay-pomodoro" class="pomodoro-overlay">
-    <div class="text-center">
-      <h2 id="pomodoro-task-name" class="morning-gate-title text-center" style="font-size: 1.5rem; max-width: 300px; margin: 0 auto 8px;">ชื่องาน...</h2>
-      <p id="pomodoro-status" class="pomodoro-label">กำลังโฟกัส (25 นาที)</p>
-    </div>
-    
-    <div class="pomodoro-ring">
-      <svg viewBox="0 0 100 100">
-        <defs>
-          <linearGradient id="pomodoroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#3b82f6" />
-            <stop offset="100%" stop-color="#8b5cf6" />
-          </linearGradient>
-        </defs>
-        <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
-        <circle id="pomodoro-circle-progress" class="ring-progress" cx="50" cy="50" r="45" stroke-dasharray="283" stroke-dashoffset="0"></circle>
-      </svg>
-      <div id="pomodoro-time-display" class="pomodoro-time">25:00</div>
-    </div>
-    
-    <div class="pomodoro-controls">
-      <button id="pomo-play-btn" class="btn btn-icon btn-primary" onclick="window.App.togglePomodoro()">⏸</button>
-      <button class="btn btn-icon btn-outline" onclick="window.App.stopPomodoro()">⏹</button>
-      <button class="btn btn-icon btn-outline" onclick="window.App.switchPomodoroMode()">☕</button>
-    </div>
-  </div>
+    <div id="overlay-pomodoro" class="pomodoro-overlay">
+      <div class="text-center">
+        <h2 id="pomodoro-task-name" class="morning-gate-title text-center"
+          style="font-size: 1.5rem; max-width: 300px; margin: 0 auto 8px;">ชื่องาน...</h2>
+        <p id="pomodoro-status" class="pomodoro-label">กำลังโฟกัส (25 นาที)</p>
+      </div>
 
-  <!-- =========================================
-       OVERLAY: Celebration
-       ========================================= -->
-  <div id="overlay-celebration" class="celebration-overlay">
-    <div class="celebration-text">ลุยกันเลย! 🚀</div>
-    <div class="celebration-sub">วันใหม่เริ่มต้นขึ้นแล้ว</div>
-  </div>
+      <div class="pomodoro-ring">
+        <svg viewBox="0 0 100 100">
+          <defs>
+            <linearGradient id="pomodoroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3b82f6" />
+              <stop offset="100%" stop-color="#8b5cf6" />
+            </linearGradient>
+          </defs>
+          <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+          <circle id="pomodoro-circle-progress" class="ring-progress" cx="50" cy="50" r="45" stroke-dasharray="283"
+            stroke-dashoffset="0"></circle>
+        </svg>
+        <div id="pomodoro-time-display" class="pomodoro-time">25:00</div>
+      </div>
 
-  <!-- Toast Container -->
-  <div id="toast-container" class="toast-container"></div>
-  
-  <!-- Confirm Dialog Container -->
-  <div id="confirm-overlay" class="confirm-overlay">
-    <div class="confirm-dialog">
-      <div id="confirm-title" class="confirm-title">ยืนยัน?</div>
-      <div id="confirm-message" class="confirm-message">ข้อความ...</div>
-      <div class="confirm-buttons">
-        <button id="confirm-cancel" class="btn btn-outline">ยกเลิก</button>
-        <button id="confirm-ok" class="btn btn-primary">ตกลง</button>
+      <div class="pomodoro-controls">
+        <button id="pomo-play-btn" class="btn btn-icon btn-primary" onclick="window.App.togglePomodoro()">⏸</button>
+        <button class="btn btn-icon btn-outline" onclick="window.App.stopPomodoro()">⏹</button>
+        <button class="btn btn-icon btn-outline" onclick="window.App.switchPomodoroMode()">☕</button>
       </div>
     </div>
-  </div>
 
-</div> <!-- /#app -->
+    <!-- =========================================
+       OVERLAY: Celebration
+       ========================================= -->
+    <div id="overlay-celebration" class="celebration-overlay">
+      <div class="celebration-text">ลุยกันเลย! 🚀</div>
+      <div class="celebration-sub">วันใหม่เริ่มต้นขึ้นแล้ว</div>
+    </div>
 
-<script src="app.js"></script>
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Confirm Dialog Container -->
+    <div id="confirm-overlay" class="confirm-overlay">
+      <div class="confirm-dialog">
+        <div id="confirm-title" class="confirm-title">ยืนยัน?</div>
+        <div id="confirm-message" class="confirm-message">ข้อความ...</div>
+        <div class="confirm-buttons">
+          <button id="confirm-cancel" class="btn btn-outline">ยกเลิก</button>
+          <button id="confirm-ok" class="btn btn-primary">ตกลง</button>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- /#app -->
+
+  <script src="app.js"></script>
 </body>
+
 </html>
