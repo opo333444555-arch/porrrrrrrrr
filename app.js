@@ -154,29 +154,59 @@ const App = {
     }
   },
   
-  loadData() {
-    window.AppState.data.assignments = this.loadLocal('assignments', []);
-    window.AppState.data.quests = this.loadLocal('quests', JSON.parse(JSON.stringify(DEFAULT_QUESTS)));
-    window.AppState.data.events = this.loadLocal('events', []);
-    window.AppState.data.journal = this.loadLocal('journal', []);
-    window.AppState.data.notes = this.loadLocal('notes', {});
+  async loadData() {
+    const defaultData = {
+      assignments: [],
+      quests: [],
+      events: [],
+      journal: [],
+      subjectNotes: {},
+      exp: 0,
+      level: 1,
+      lastQuestGate: null
+    };
     
-    // Attempt cloud sync (mocked for now, in real life call /api/data)
-    // this.syncCloud();
+    // First, try loading from local cache for speed
+    const local = localStorage.getItem('sq_data_' + window.AppState.user.username);
+    if(local) {
+      try {
+        window.AppState.data = { ...defaultData, ...JSON.parse(local) };
+      } catch(e) {}
+    } else {
+      window.AppState.data = { ...defaultData };
+    }
     
-    this.renderAll();
+    // Then try to sync from cloud
+    try {
+      const res = await fetch('/api/data', {
+        headers: { 'x-user-id': window.AppState.user.id }
+      });
+      const resData = await res.json();
+      if (resData.success && resData.data && Object.keys(resData.data).length > 0) {
+        window.AppState.data = { ...defaultData, ...resData.data };
+        // Save to local cache
+        localStorage.setItem('sq_data_' + window.AppState.user.username, JSON.stringify(window.AppState.data));
+      }
+    } catch(err) {
+      console.warn('Offline mode: Could not fetch data from cloud.');
+    }
   },
   
   saveData() {
-    this.saveLocal('assignments', window.AppState.data.assignments);
-    this.saveLocal('quests', window.AppState.data.quests);
-    this.saveLocal('events', window.AppState.data.events);
-    this.saveLocal('journal', window.AppState.data.journal);
-    this.saveLocal('notes', window.AppState.data.notes);
-    this.saveLocal('daily', window.AppState.daily);
+    if(!window.AppState.user) return;
     
-    // Trigger render
-    this.renderAll();
+    // Save locally (Offline-first)
+    localStorage.setItem('sq_data_' + window.AppState.user.username, JSON.stringify(window.AppState.data));
+    
+    // Sync to cloud in background
+    fetch('/api/data', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-user-id': window.AppState.user.id
+      },
+      body: JSON.stringify({ data: window.AppState.data })
+    }).catch(err => console.warn('Offline mode: Changes saved locally only.'));
   },
   
   renderAll() {
@@ -246,33 +276,56 @@ const App = {
     }
   },
   
-  handleAuthSubmit() {
-    const isLogin = document.getElementById('auth-register-fields').classList.contains('hidden');
-    const user = document.getElementById('auth-username').value;
-    const pass = document.getElementById('auth-password').value;
+  async handleAuthSubmit() {
+    const isRegister = document.getElementById('auth-register-fields').classList.contains('hidden') === false;
+    const username = document.getElementById('auth-username').value.trim();
+    const password = document.getElementById('auth-password').value.trim();
+    const displayName = document.getElementById('auth-display-name').value.trim() || username;
     
-    if (pass.length < 4) {
+    if(!username || !password) return;
+    
+    if (password.length < 4) {
       this.showToast('รหัสผ่านต้องมีอย่างน้อย 4 ตัวอักษร', 'error');
       return;
     }
     
-    // MOCK API CALL
-    setTimeout(() => {
-      if (isLogin) {
-        // Mock Login
-        window.AppState.user = { username: user, displayName: user };
+    const btn = document.getElementById('auth-submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="pulse-dot"></span> กำลังดำเนินการ...';
+    
+    try {
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: isRegister ? 'register' : 'login',
+          username,
+          password,
+          displayName
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        window.AppState.user = data.user;
         this.saveLocal('user', window.AppState.user);
-        this.showToast(`ยินดีต้อนรับกลับ, ${user}!`, 'success');
+        
+        await this.loadData();
+        
+        this.showToast(isRegister ? 'สมัครสมาชิกสำเร็จ!' : `ยินดีต้อนรับกลับ, ${data.user.displayName}!`, 'success');
         this.init();
       } else {
-        // Mock Register
-        const dName = document.getElementById('auth-display-name').value || user;
-        window.AppState.user = { username: user, displayName: dName };
-        this.saveLocal('user', window.AppState.user);
-        this.showToast('สมัครสมาชิกสำเร็จ!', 'success');
-        this.init();
+        this.showToast('เกิดข้อผิดพลาด: ' + data.error, 'error');
+        btn.disabled = false;
+        btn.innerHTML = isRegister ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ';
       }
-    }, 500);
+    } catch (err) {
+      console.error(err);
+      this.showToast('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาลองใหม่', 'error');
+      btn.disabled = false;
+      btn.innerHTML = isRegister ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ';
+    }
   },
   
   logout() {
