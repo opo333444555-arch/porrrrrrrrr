@@ -1,0 +1,12 @@
+{
+  "name": "studyquest",
+  "version": "1.0.0",
+  "description": "StudyQuest — Daily Planner & Quest Tracker for Students",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4"
+  }
+}
